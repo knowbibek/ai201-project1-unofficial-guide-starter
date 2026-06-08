@@ -1,15 +1,10 @@
 # The Unofficial Guide — Project 1
 
-> **How to use this template:**
-> Complete each section *after* you've built and tested the corresponding part of your system.
-> Do not write placeholder text — if a section isn't done yet, leave it blank and come back.
-> Every section below is required for submission. One-liners will not receive full credit.
-
 ---
 
 ## Domain
 
-My system covers an unofficial student guide to social life around Mississippi State University, specifically focusing on the best local bars, parks, and spots to meet people in Starkville. This student-generated knowledge is highly valuable for incoming students trying to navigate the local culture. It is hard to find through official channels because the official MSU website focuses strictly on university academics and campus operations, leaving out the real student perspective on off-campus nightlife, hangouts, and recreational spots.
+***My system covers an unofficial student guide to social life around Mississippi State University, specifically focusing on the best local bars, parks, and spots to meet people in Starkville. This student-generated knowledge is highly valuable for incoming students trying to navigate the local culture. It is hard to find through official channels because the official MSU website focuses strictly on university academics and campus operations, leaving out the real student perspective on off-campus nightlife, hangouts, and recreational spots.***
 ---
 
 ## Document Sources

@@ -1,9 +1,5 @@
 # Project 1 Planning: The Unofficial Guide
 
-> Write this document before you write any pipeline code.
-> Your spec and architecture diagram are what you'll use to direct AI tools (Claude, Copilot, etc.) to generate your implementation — the more specific they are, the more useful the generated code will be.
-> Update the Retrieval Approach and Chunking Strategy sections if you change your approach during implementation.
-> Update this file before starting any stretch features.
 
 ---
 
@@ -67,10 +63,6 @@ My domain is an unofficial student guide to social life around Mississippi State
 
 ## Evaluation Plan
 
-<!-- List your 5 test questions with their expected correct answers.
-     Questions should be specific enough that you can judge whether the system's response
-     is right or wrong. "What are good dining halls?" is too vague.
-     "What do students say about wait times at [dining hall name] during lunch?" is testable. -->
 
 | # | Question | Expected answer |
 |---|----------|-----------------|
@@ -84,10 +76,6 @@ My domain is an unofficial student guide to social life around Mississippi State
 
 ## Anticipated Challenges
 
-<!-- What could go wrong? Name at least two specific risks with reasoning.
-     Consider: noisy or inconsistent documents, missing source attribution, off-topic
-     retrieval, chunks that split key information across boundaries. -->
-
 1. **Filtering by Relevance and Popularity:** Reddit threads and Yelp pages contain a mix of highly upvoted, trusted recommendations and low-quality comments with few upvotes or no replies. Our system risks retrieving unpopular or irrelevant opinions if we don't account for these popularity signals during ingestion.
 2. **Structural Text Noise:** Raw data from different platforms includes layout clutter like usernames, timestamps, upvote counts, and HTML tags. This non-narrative text can disrupt chunking boundaries and dilute the semantic meaning of the actual reviews.
 
@@ -95,11 +83,6 @@ My domain is an unofficial student guide to social life around Mississippi State
 
 ## Architecture
 
-<!-- Draw a diagram of your pipeline showing the five stages:
-     Document Ingestion → Chunking → Embedding + Vector Store → Retrieval → Generation
-     Label each stage with the tool or library you're using.
-     You can use ASCII art, a Mermaid diagram, or embed a sketch as an image.
-     You'll use this diagram as context when prompting AI tools to implement each stage. -->
 
 ---
 [Documents: Reddit/Yelp] ──> (Ingestion & Cleaning) ──> (Chunking: 500 chars)

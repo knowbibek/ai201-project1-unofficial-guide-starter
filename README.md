@@ -4,7 +4,7 @@
 
 ## Domain
 
-***My system covers an unofficial student guide to social life around Mississippi State University, specifically focusing on the best local bars, parks, and spots to meet people in Starkville. This student-generated knowledge is highly valuable for incoming students trying to navigate the local culture. It is hard to find through official channels because the official MSU website focuses strictly on university academics and campus operations, leaving out the real student perspective on off-campus nightlife, hangouts, and recreational spots.***
+My system covers an unofficial student guide to social life around Mississippi State University, specifically focusing on the best local bars, parks, and spots to meet people in Starkville. This student-generated knowledge is highly valuable for incoming students trying to navigate the local culture. It is hard to find through official channels because the official MSU website focuses strictly on university academics and campus operations, leaving out the real student perspective on off-campus nightlife, hangouts, and recreational spots.
 ---
 
 ## Document Sources
@@ -25,6 +25,20 @@
 ---
 
 ## Chunking Strategy
+### Sample Chunks
+
+Here are 5 representative chunks extracted during the ingestion pipeline process:
+
+* **Sample Chunk 1 (Source: `source5.txt` - Yelp Reviews - Dave's Dark Horse Tavern)**
+    > "Dave's Dark Horse Tavern is a total classic Starkville dive. The floors are a bit sticky and it gets incredibly loud on Friday and Saturday nights, but that is exactly where its charm comes from. It is a favorite hangout spot for upperclassmen and graduate students looking for a relaxed, low-key atmosphere to grab pizza, drink cold beers, and listen to occasional local acoustic acts without dealing with a massive club crowd."
+* **Sample Chunk 2 (Source: `source7.txt` - Yelp Reviews - Rick's Cafe)**
+    > "Rick's Cafe has a massive concert-like energy that completely takes over on the weekends. The venue brings in live regional bands and country artists, and when a big act is in town, the place gets absolutely packed to the brim. You definitely want to check their online calendar to see who is performing before you show up, because the entire vibe and crowd of the night changes depending on the musical act playing."
+* **Sample Chunk 3 (Source: `source6.txt` - TripAdvisor Reviews - Noxubee Wildlife Refuge)**
+    > "When visiting the Noxubee National Wildlife Refuge, students highly recommend bringing plenty of heavy-duty bug spray, especially during the humid summer months when mosquitoes are aggressive. Popular activities include walking the wooden boardwalks and birdwatching. Visitors must keep a safe distance from the alligators basking near the water edges and ensure all dogs are kept tightly on a leash."
+* **Sample Chunk 4 (Source: `source8.txt` - Yelp Reviews - 929 Coffee Bar)**
+    > "929 Coffee Bar is an excellent spot right off Main Street, but do not expect total silence. The cafe constantly maintains a low hum or buzz of student conversations, espresso machines running, and background music playing. It is a fantastic environment for open group studying or meeting up with friends, but if you need pure isolation to focus, you should absolutely bring noise-canceling headphones."
+* **Sample Chunk 5 (Source: `source9.txt` - Yelp Reviews - Two Brothers Smoked Meats)**
+    > "Two Brothers Smoked Meats in the Cotton District is legendary for its food and atmosphere. The standout items are their smoked wings—which you should always order dry-rubbed so you taste the clean smoke flavor—and their tender brisket. The brisket frequently sells out fast, so arriving earlier in the evening is highly recommended if you want a guaranteed order."
 
 **Chunk size:** 500 characters.
 
@@ -56,6 +70,60 @@
 *"You are a factual, strictly grounded assistant. Answer the user's question using ONLY the provided document context below. Do not use your own general external knowledge, assumptions, or extrapolation. If the provided documents do not contain enough specific facts to fully answer the question, you must respond EXACTLY with: 'I don't have enough information on that.'"*
 
 **How source attribution is surfaced in the response:** Source attribution is strictly handled programmatically by the Python backend to prevent the AI from hallucinating citations. During the database loading phase, I captured the `filename` and `chunk_position` as metadata for every chunk. During retrieval, the script parses ChromaDB's raw output, extracts those filenames into a `unique_sources` set, and injects them into an isolated, non-editable Gradio text box explicitly labeled "Retrieved From". The LLM provides the conversational answer, but the system code guarantees the citations are authentic.
+
+---
+
+## Retrieval Test Results
+
+### Query 1: "Where can I see live music perform in Starkville?"
+* **Top Returned Chunks:** 1. Chunk from `source7.txt` (Rick's Cafe live regional bands and country artists concerts).
+    2. Chunk from `source5.txt` (Dave's Dark Horse Tavern occasional local acoustic acts).
+* **Relevance Explanation:** These chunks are highly relevant because they directly extract the explicit locations matching the semantic meaning of "live music performance" within the Starkville database, filtering out non-music establishments like coffee shops or parks.
+
+### Query 2: "What is the best time of day to go to Noxubee Refuge?"
+* **Top Returned Chunks:**
+    1. Chunk from `source6.txt` (Visiting early in the morning for a peaceful experience with water fog).
+    2. Chunk from `source6.txt` (Weekday mornings suggested to have the trail system entirely to oneself).
+* **Relevance Explanation:** The database successfully performed a vector match on time-of-day contextual indicators, pulling specific student recommendations advising early morning schedules over hot afternoon hours.
+
+### Query 3: "Which restaurant has patio or balcony outdoor seating?"
+* **Top Returned Chunks:**
+    1. Chunk from `source9.txt` (Two Brothers Smoked Meats balcony seating overlooking the Cotton District strip).
+    2. Chunk from `source4.txt` (Scenic outdoor date spots and restaurant hangouts).
+
+---
+
+## Example Responses
+
+### Example 1: Standard Search
+* **User Input:** *"What should I order at Two Brothers?"*
+* **System Response:** *"According to the provided reviews for Two Brothers Smoked Meats, you should order the smoked wings, which are considered the best in town. It is recommended to get them dry rubbed so the smoke remains the focus. The brisket is also highly recommended, though it occasionally sells out early in the day. [Sources: source9.txt]"*
+
+### Example 2: Standard Search
+* **User Input:** *"Is 929 Coffee Bar completely quiet?"*
+* **System Response:** *"No, 929 Coffee Bar is not considered a spot for total silence. It features a continuous low buzz of casual student conversation and ambient coffee shop noise. If you require absolute quiet for studying, it is recommended to bring headphones. [Sources: source8.txt]"*
+
+### Example 3: Out-of-Scope Query (Refusal)
+* **User Input:** *"Can you explain how to solve a quadratic equation using the quadratic formula?"*
+* **System Response:** *"I don't have enough information on that."*
+
+---
+
+## Query Interface
+
+### Description
+The application features a clean, single-page web view built using Python's `Gradio` framework. 
+* **Input Field:** A simple, full-width single text box component (`gr.Textbox`) where users type their natural language questions about Starkville social life.
+* **Output Fields:** Two isolated, clear output panels:
+    1. A standard chat response window (`gr.Textbox`) displaying the conversational, strictly grounded answer synthesized by the LLM.
+    2. A non-editable source attribution log panel (`gr.Textbox`) explicitly labeled "Retrieved From" which dynamically renders the source filenames parsed from ChromaDB's retrieval metadata.
+
+### Sample Interaction Transcript
+* **User:** *"What are the key safety warnings when walking around Noxubee Refuge?"*
+* **System Core Output:** *"When visiting Noxubee Refuge, you must keep a safe distance from alligators and never approach them. Additionally, you must not let your dogs run loose; they need to remain controlled."*
+* **System Source Panel Output:** `source6.txt`
+
+---
 
 ---
 
